@@ -1,0 +1,190 @@
+# Default values for presto
+
+image:
+  repository: ahanaio/prestodb
+  pullPolicy: IfNotPresent
+  tag: ~
+
+imagePullSecrets: []
+
+service:
+  type: ClusterIP
+  port: 8080
+  nodePort: ~
+  labels: {}
+  annotations: {}
+
+ingress:
+  enabled: false
+  labels: {}
+  annotations: {}
+  ingressClassName: ~
+  tls: []
+  host: presto.local
+  path: /
+  pathType: Prefix
+
+serviceAccount:
+  create: true
+  labels: {}
+  annotations: {}
+
+# Common environment variables (templated)
+env: []
+# Common envFrom items to set up environment variables (templated)
+envFrom: []
+
+# Additional common volumes (templated)
+volumes: []
+# Additional common volumeMounts (templated)
+volumeMounts: []
+
+# Additional common init containers (templated)
+initContainers: []
+# Additional common containers (templated)
+containers: []
+
+# Constrain all presto pods to specific nodes
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Security context by default
+securityContext: {}
+
+# Presto home directory
+home: /opt/presto-server
+
+# Deployment mode
+# single - Minimal Presto deployment where single pod acts as Coordinator and Worker
+# cluster - Standard Presto deployment with one Coordinator and multiple Workers
+# ha-cluster - [Not supported yet] Highly available Presto deployment with multiple Resource Managers, Coordinators and Workers
+mode: cluster
+
+# Common node properties, see https://prestodb.io/docs/current/installation/deployment.html#node-properties
+node:
+  location: presto.local
+  environment: development
+  dataDir: /var/presto/data
+
+# Common JVM options, see https://prestodb.io/docs/current/installation/deployment.html#jvm-config
+jvm: |-
+  -server
+  -XX:+ExitOnOutOfMemoryError
+  -Djdk.attach.allowAttachSelf=true
+
+# Common configuration properties, see https://prestodb.io/docs/current/installation/deployment.html#config-properties
+config: |-
+  query.max-memory=1GB
+  query.max-memory-per-node=512MB
+
+# Common log-levels properties, see https://prestodb.io/docs/current/installation/deployment.html#log-levels
+log: |-
+  com.facebook.presto=INFO
+
+# Coordinator configuration
+coordinator:
+  # Coordinator JVM options (overwrites common JVM options)
+  jvm: ""
+  # Command to launch coordinator (templated)
+  command: ["sh", "-c", "$PRESTO_HOME/bin/launcher run"]
+  # Arguments to launch coordinator (templated)
+  args: ~
+  # Additional coordinator environment variables (templated)
+  env: []
+  # Additional coordinator envFrom items to set up environment variables (templated)
+  envFrom: []
+  # Additional coordinator volumes (templated)
+  volumes: []
+  # Additional coordinator volumeMounts (templated)
+  volumeMounts: []
+  # Additional coordinator init containers (templated)
+  initContainers: []
+  # Additional coordinator containers (templated)
+  containers: []
+  # Coordinator liveness probe
+  livenessProbe:
+    initialDelaySeconds: 45
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+    successThreshold: 1
+  # Coordinator readiness probe
+  readinessProbe:
+    initialDelaySeconds: 45
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+    successThreshold: 1
+  # Deployment configuration for coordinator
+  deployment:
+    strategy:
+      type: Recreate
+    revisionHistoryLimit: 3
+  # Coordinator resource limits and requests
+  resources: {}
+  # Constrain coordinator pods to specific nodes (overwrites common constraints)
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  # Coordinator security context (overwrites default security context)
+  securityContext: {}
+
+# Worker configuration
+worker:
+  # Number of workers
+  replicas: 2
+  # Worker JVM options (overwrites common JVM options)
+  jvm: ""
+  # Command to launch worker (templated)
+  command: ["sh", "-c", "$PRESTO_HOME/bin/launcher run"]
+  # Arguments to launch worker (templated)
+  args: ~
+  # Additional worker environment variables (templated)
+  env: []
+  # Additional worker envFrom items to set up environment variables (templated)
+  envFrom: []
+  # Additional worker volumes (templated)
+  volumes: []
+  # Additional worker volumeMounts (templated)
+  volumeMounts: []
+  # Additional worker init containers (templated)
+  initContainers: []
+  # Additional worker containers (templated)
+  containers: []
+  # Worker liveness probe
+  livenessProbe:
+    initialDelaySeconds: 45
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+    successThreshold: 1
+  # Worker readiness probe
+  readinessProbe:
+    initialDelaySeconds: 45
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+    successThreshold: 1
+  # Deployment configuration for worker
+  deployment:
+    strategy:
+      type: Recreate
+    revisionHistoryLimit: 3
+  # Worker resource limits and requests
+  resources: {}
+  # Constrain worker pods to specific nodes (overwrites common constraints)
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  # Worker security context (overwrites default security context)
+  securityContext: {}
+
+# Catalogs
+catalog: {}
+#  jmx: |-
+#    connector.name=jmx
+#  tpch: |-
+#    connector.name=tpch
+#  tpcds: |-
+#    connector.name=tpcds
