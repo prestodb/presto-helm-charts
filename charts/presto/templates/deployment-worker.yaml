@@ -8,7 +8,7 @@
 {{- $affinity := or .Values.worker.affinity .Values.affinity }}
 {{- $tolerations := or .Values.worker.tolerations .Values.tolerations }}
 {{- $securityContext := or .Values.worker.securityContext .Values.securityContext }}
-{{- if not (eq .Values.mode "single") }}
+{{- if or (eq .Values.mode "cluster") (eq .Values.mode "ha-cluster") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

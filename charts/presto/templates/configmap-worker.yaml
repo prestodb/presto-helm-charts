@@ -1,4 +1,4 @@
-{{- if not (eq .Values.mode "single") }}
+{{- if or (eq .Values.mode "cluster") (eq .Values.mode "ha-cluster") }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,6 +7,7 @@ metadata:
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: worker
     app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
@@ -19,7 +20,8 @@ data:
   config.properties: |-
     coordinator=false
     http-server.http.port={{ .Values.service.port }}
-    discovery.uri=http://{{ .Release.Name }}:{{ .Values.service.port }}
+    discovery.uri=http://{{ .Release.Name }}-discovery:{{ .Values.service.port }}
+    resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
     {{- .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}

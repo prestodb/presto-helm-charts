@@ -1,42 +1,43 @@
-{{- $env := concat .Values.env .Values.coordinator.env }}
-{{- $envFrom := concat .Values.envFrom .Values.coordinator.envFrom }}
-{{- $volumes := concat .Values.volumes .Values.coordinator.volumes }}
-{{- $volumeMounts := concat .Values.volumeMounts .Values.coordinator.volumeMounts }}
-{{- $containers := concat .Values.containers .Values.coordinator.containers }}
-{{- $initContainers := concat .Values.initContainers .Values.coordinator.initContainers }}
-{{- $nodeSelector := or .Values.coordinator.nodeSelector .Values.nodeSelector }}
-{{- $affinity := or .Values.coordinator.affinity .Values.affinity }}
-{{- $tolerations := or .Values.coordinator.tolerations .Values.tolerations }}
-{{- $securityContext := or .Values.coordinator.securityContext .Values.securityContext }}
+{{- $env := concat .Values.env .Values.resourceManager.env }}
+{{- $envFrom := concat .Values.envFrom .Values.resourceManager.envFrom }}
+{{- $volumes := concat .Values.volumes .Values.resourceManager.volumes }}
+{{- $volumeMounts := concat .Values.volumeMounts .Values.resourceManager.volumeMounts }}
+{{- $containers := concat .Values.containers .Values.resourceManager.containers }}
+{{- $initContainers := concat .Values.initContainers .Values.resourceManager.initContainers }}
+{{- $nodeSelector := or .Values.resourceManager.nodeSelector .Values.nodeSelector }}
+{{- $affinity := or .Values.resourceManager.affinity .Values.affinity }}
+{{- $tolerations := or .Values.resourceManager.tolerations .Values.tolerations }}
+{{- $securityContext := or .Values.resourceManager.securityContext .Values.securityContext }}
+{{- if eq .Values.mode "ha-cluster" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-coordinator
+  name: {{ .Release.Name }}-resource-manager
   labels:
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/component: coordinator
+    app.kubernetes.io/component: resource-manager
     app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: {{ eq .Values.mode "ha-cluster" | ternary .Values.coordinator.replicas 1 }}
+  replicas: {{ eq .Values.mode "ha-cluster" | ternary .Values.resourceManager.replicas 1 }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Chart.Name }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-      app.kubernetes.io/component: coordinator
-  strategy: {{- toYaml .Values.coordinator.deployment.strategy | nindent 4 }}
-  revisionHistoryLimit: {{ toYaml .Values.coordinator.deployment.revisionHistoryLimit }}
+      app.kubernetes.io/component: resource-manager
+  strategy: {{- toYaml .Values.resourceManager.deployment.strategy | nindent 4 }}
+  revisionHistoryLimit: {{ toYaml .Values.resourceManager.deployment.revisionHistoryLimit }}
   template:
     metadata:
       labels:
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/component: coordinator
+        app.kubernetes.io/component: resource-manager
       annotations:
         checksum/catalog: {{ include (print $.Template.BasePath "/configmap-catalog.yaml") . | sha256sum }}
-        checksum/coordinator: {{ include (print $.Template.BasePath "/configmap-coordinator.yaml") . | sha256sum }}
+        checksum/resource-manager: {{ include (print $.Template.BasePath "/configmap-resource-manager.yaml") . | sha256sum }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets: {{- toYaml . | nindent 8 }}
@@ -48,13 +49,13 @@ spec:
       initContainers: {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       containers:
-        - name: coordinator
+        - name: resource-manager
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.coordinator.command }}
+          {{- with .Values.resourceManager.command }}
           command: {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
-          {{- with .Values.coordinator.args }}
+          {{- with .Values.resourceManager.args }}
           args: {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
           {{- with $env }}
@@ -66,25 +67,27 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
+            - name: thrift
+              containerPort: 8081
           livenessProbe:
             httpGet:
               path: /v1/status
               port: http
-            initialDelaySeconds: {{ .Values.coordinator.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.coordinator.livenessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.coordinator.livenessProbe.timeoutSeconds }}
-            failureThreshold: {{ .Values.coordinator.livenessProbe.failureThreshold }}
-            successThreshold: {{ .Values.coordinator.livenessProbe.successThreshold }}
+            initialDelaySeconds: {{ .Values.resourceManager.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.resourceManager.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.resourceManager.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.resourceManager.livenessProbe.failureThreshold }}
+            successThreshold: {{ .Values.resourceManager.livenessProbe.successThreshold }}
           readinessProbe:
             httpGet:
               path: /v1/status
               port: http
-            initialDelaySeconds: {{ .Values.coordinator.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.coordinator.readinessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.coordinator.readinessProbe.timeoutSeconds }}
-            failureThreshold: {{ .Values.coordinator.readinessProbe.failureThreshold }}
-            successThreshold: {{ .Values.coordinator.readinessProbe.successThreshold }}
-          {{- with .Values.coordinator.resources }}
+            initialDelaySeconds: {{ .Values.resourceManager.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.resourceManager.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.resourceManager.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.resourceManager.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.resourceManager.readinessProbe.successThreshold }}
+          {{- with .Values.resourceManager.resources }}
           resources: {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
@@ -101,7 +104,7 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ .Release.Name }}-coordinator
+            name: {{ .Release.Name }}-resource-manager
         - name: catalog
           configMap:
             name: {{ .Release.Name }}-catalog
@@ -120,3 +123,4 @@ spec:
       {{- with $securityContext }}
       securityContext: {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end }}

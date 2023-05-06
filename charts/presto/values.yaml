@@ -44,10 +44,12 @@ initContainers: []
 # Additional common containers (templated)
 containers: []
 
-# Constrain all presto pods to specific nodes
+# Constrain all presto pods to nodes with specific node labels
 nodeSelector: {}
-tolerations: []
+# Constrain all presto pods to nodes by affinity/anti-affinity rules
 affinity: {}
+# Allow to schedule all presto pods on nodes with matching taints
+tolerations: []
 
 # Security context by default
 securityContext: {}
@@ -58,7 +60,7 @@ home: /opt/presto-server
 # Deployment mode
 # single - Minimal Presto deployment where single pod acts as Coordinator and Worker
 # cluster - Standard Presto deployment with one Coordinator and multiple Workers
-# ha-cluster - [Not supported yet] Highly available Presto deployment with multiple Resource Managers, Coordinators and Workers
+# ha-cluster - Highly available Presto deployment with multiple Resource Managers, Coordinators and Workers
 mode: cluster
 
 # Common node properties, see https://prestodb.io/docs/current/installation/deployment.html#node-properties
@@ -82,8 +84,62 @@ config: |-
 log: |-
   com.facebook.presto=INFO
 
+# Resource Manager configuration
+resourceManager:
+  # Number of resource managers in "ha-cluster" mode
+  replicas: 1
+  # Resource manager JVM options (overwrites common JVM options)
+  jvm: ""
+  # Command to launch resource manager (templated)
+  command: ["sh", "-c", "$PRESTO_HOME/bin/launcher run"]
+  # Arguments to launch resource manager (templated)
+  args: ~
+  # Additional resource manager environment variables (templated)
+  env: []
+  # Additional resource manager envFrom items to set up environment variables (templated)
+  envFrom: []
+  # Additional resource manager volumes (templated)
+  volumes: []
+  # Additional resource manager volumeMounts (templated)
+  volumeMounts: []
+  # Additional resource manager init containers (templated)
+  initContainers: []
+  # Additional resource manager containers (templated)
+  containers: []
+  # Resource manager liveness probe
+  livenessProbe:
+    initialDelaySeconds: 45
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+    successThreshold: 1
+  # Resource manager readiness probe
+  readinessProbe:
+    initialDelaySeconds: 45
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+    successThreshold: 1
+  # Deployment configuration for resource manager
+  deployment:
+    strategy:
+      type: Recreate
+    revisionHistoryLimit: 3
+  # Resource manager resource limits and requests
+  resources: {}
+  # Constrain resource manager pods to nodes with specific node labels
+  nodeSelector: {}
+  # Constrain resource manager pods to nodes by affinity/anti-affinity rules
+  affinity: {}
+  # Allow to schedule resource manager pods on nodes with matching taints
+  tolerations: []
+  # Resource manager security context (overwrites default security context)
+  securityContext: {}
+
 # Coordinator configuration
 coordinator:
+  # Number of coordinators in "ha-cluster" mode
+  replicas: 1
   # Coordinator JVM options (overwrites common JVM options)
   jvm: ""
   # Command to launch coordinator (templated)
@@ -123,16 +179,18 @@ coordinator:
     revisionHistoryLimit: 3
   # Coordinator resource limits and requests
   resources: {}
-  # Constrain coordinator pods to specific nodes (overwrites common constraints)
+  # Constrain coordinator pods to nodes with specific node labels
   nodeSelector: {}
-  tolerations: []
+  # Constrain coordinator pods to nodes by affinity/anti-affinity rules
   affinity: {}
+  # Allow to schedule coordinator pods on nodes with matching taints
+  tolerations: []
   # Coordinator security context (overwrites default security context)
   securityContext: {}
 
 # Worker configuration
 worker:
-  # Number of workers
+  # Number of workers in "cluster" and "ha-cluster" modes
   replicas: 2
   # Worker JVM options (overwrites common JVM options)
   jvm: ""
@@ -173,10 +231,12 @@ worker:
     revisionHistoryLimit: 3
   # Worker resource limits and requests
   resources: {}
-  # Constrain worker pods to specific nodes (overwrites common constraints)
+  # Constrain worker pods to nodes with specific node labels
   nodeSelector: {}
-  tolerations: []
+  # Constrain worker pods to nodes by affinity/anti-affinity rules
   affinity: {}
+  # Allow to schedule worker pods on nodes with matching taints
+  tolerations: []
   # Worker security context (overwrites default security context)
   securityContext: {}
 

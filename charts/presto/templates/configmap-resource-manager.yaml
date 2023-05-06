@@ -1,12 +1,13 @@
+{{- if eq .Values.mode "ha-cluster" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-coordinator
+  name: {{ .Release.Name }}-resource-manager
   labels:
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/component: coordinator
+    app.kubernetes.io/component: resource-manager
     app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
@@ -15,14 +16,18 @@ data:
     node.environment={{ .Values.node.environment }}
     node.data-dir={{ .Values.node.dataDir }}
   jvm.config: |-
-    {{- .Values.coordinator.jvm | default .Values.jvm | nindent 4 }}
+    {{- .Values.resourceManager.jvm | default .Values.jvm | nindent 4 }}
   config.properties: |-
-    coordinator=true
+    coordinator=false
     http-server.http.port={{ .Values.service.port }}
     discovery.uri=http://{{ .Release.Name }}-discovery:{{ .Values.service.port }}
-    discovery-server.enabled={{ or (eq .Values.mode "single") (eq .Values.mode "cluster") }}
-    node-scheduler.include-coordinator={{ eq .Values.mode "single" }}
-    resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
+    discovery-server.enabled=true
+    node-scheduler.include-coordinator=false
+    resource-manager-enabled=true
+    resource-manager=true
+    thrift.server.port=8081
+    thrift.server.ssl.enabled=false
     {{- .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
+{{- end }}
