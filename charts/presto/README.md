@@ -15,27 +15,40 @@ $ helm install my-presto charts/presto
 ```
 
 ## Uninstalling the Chart
-Uninstall the chart with `my-presto` release name:
+Uninstall `my-presto` release:
 ```shell
 $ helm uninstall my-presto
 ```
 
-## Debugging the Chart templates
-Use `helm template --debug` to render the chart templates locally, for example to check correctness when Ingress is enabled:
+## Configuration
+Refer default `values.yaml` file of the chart for all the possible config properties:
 ```shell
-$ helm template my-presto charts/presto --set ingress.enabled=true --debug
+helm show values charts/presto
 ```
 
-Use `helm install --dry-run --debug` to render the chart templates on a server side without creating resources.
-It might be useful to check if the chart configuration generates valid Kubernetes resources.
+## Presto deployment modes
+The chart supports three Presto deployment modes: single, cluster and highly available cluster.
+
+### Single
+Minimal Presto deployment, where single pod acts as Coordinator and Worker.
+This mode can be used for experimentation and testing purposes in environments with limited resources.\
+The following command installs Presto in **single** mode:
 ```shell
-$ helm install my-presto charts/presto --set ingress.enabled=true --dry-run --debug
+$ helm install my-presto charts/presto --set mode=single
 ```
 
----
-## Running locally
-[Minikube](https://minikube.sigs.k8s.io) can be used to deploy the chart and run Presto locally:
+### Cluster
+Standard Presto deployment with one Coordinator and multiple Workers.
+The chart deploys Presto in cluster mode by default.\
+The following command installs Presto in **cluster** mode with 3 workers:
 ```shell
-$ minikube start --cpus=4 --memory=8g --addons=ingress --addons=ingress-dns
-$ minikube dashboard
+$ helm install my-presto charts/presto --set mode=cluster --set worker.replicas=3
+```
+
+### Highly Available Cluster
+Highly available Presto deployment with multiple Resource Managers, Coordinators and Workers.
+This mode allows to avoid single point of failure and mitigate coordinator bottleneck in high load Presto clusters.\
+The following command installs Presto in **ha-cluster** mode with 2 coordinators and 3 workers:
+```shell
+$ helm install my-presto charts/presto --set mode=ha-cluster --set coordinator.replicas=2 --set worker.replicas=3
 ```
