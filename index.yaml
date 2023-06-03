@@ -1,0 +1,22 @@
+apiVersion: v1
+entries:
+  presto:
+  - apiVersion: v2
+    appVersion: "0.281"
+    created: "2023-06-03T21:16:17.771690724Z"
+    description: The official Helm chart for Presto
+    digest: 2643807d979a145354ee1229290e6456399bc6660e9d3b86e3d96fa61d0859ce
+    home: https://prestodb.io
+    icon: https://prestodb.io/docs/current/_static/logo.png
+    keywords:
+    - presto
+    - prestodb
+    name: presto
+    sources:
+    - https://github.com/prestodb/presto
+    - https://github.com/prestodb/presto-helm-charts
+    type: application
+    urls:
+    - https://github.com/prestodb/presto-helm-charts/releases/download/presto-0.1.0/presto-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-06-03T21:16:17.771694924Z"
