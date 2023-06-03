@@ -4,6 +4,12 @@
 
 Repository for Presto Helm charts.
 
+## Add Presto charts Helm repo
+Use the following command to add Presto charts repository to Helm configuration:
+```shell
+$ helm repo add presto https://prestodb.io/presto-helm-charts
+```
+
 ## Debugging chart templates
 Use `helm template --debug` to render the chart templates locally, for example, to check correctness when Ingress is enabled:
 ```shell
