@@ -11,7 +11,7 @@ This chart bootstraps a [Presto](https://github.com/prestodb/presto) on a [Kuber
 ## Add Presto charts Helm repo
 Use the following command to add Presto charts repository to Helm configuration:
 ```shell
-$ helm repo add presto https://prestodb.io/presto-helm-charts
+$ helm repo add presto https://prestodb.github.io/presto-helm-charts
 ```
 
 ## Installing the Chart
