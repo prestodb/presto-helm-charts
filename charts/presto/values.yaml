@@ -249,3 +249,14 @@ catalog: {}
 #    connector.name=tpch
 #  tpcds: |-
 #    connector.name=tpcds
+
+# Metrics endpoint to export JMX metrics in Prometheus format
+metrics:
+  enabled: false
+  port: 9090
+  # Path to JMX exporter JAR file
+  javaagent: /usr/lib/presto/utils/jmx_prometheus_javaagent-0.16.1.jar
+  # JMX Exporter config, see https://github.com/prometheus/jmx_exporter#configuration for available options
+  config:
+    rules:
+      - pattern: ".*"

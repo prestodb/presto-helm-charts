@@ -69,6 +69,10 @@ spec:
               containerPort: {{ .Values.service.port }}
             - name: thrift
               containerPort: 8081
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /v1/status

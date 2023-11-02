@@ -16,6 +16,9 @@ data:
     node.environment={{ .Values.node.environment }}
     node.data-dir={{ .Values.node.dataDir }}
   jvm.config: |-
+    {{- if .Values.metrics.enabled }}
+    -javaagent:{{ .Values.metrics.javaagent }}={{ .Values.metrics.port }}:{{ .Values.home }}/etc/jmx_exporter.yaml
+    {{- end }}
     {{- .Values.resourceManager.jvm | default .Values.jvm | nindent 4 }}
   config.properties: |-
     coordinator=false
@@ -30,4 +33,8 @@ data:
     {{- .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
+  {{- if .Values.metrics.enabled }}
+  jmx_exporter.yaml: |-
+    {{- toYaml .Values.metrics.config | nindent 4 }}
+  {{- end }}
 {{- end }}
