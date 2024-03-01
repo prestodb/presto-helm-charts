@@ -85,7 +85,7 @@ config: |-
 log: |-
   com.facebook.presto=INFO
 
-run-coordinator: |-
+run_coordinator: |-
   #!/bin/bash
   yum install -y python3-pip
   pip3 install awscli --upgrade
@@ -96,15 +96,15 @@ run-coordinator: |-
   #
   $PRESTO_HOME/bin/launcher run
 
-password-authenticator: |-
+password_authenticator: |-
   password-authenticator.name=nb-password-authenticator
   file.password-file=/etc/ranger/auth/password-auth.properties
 
-resource-groups-properties: |-
+resource_groups_properties: |-
   resource-groups.configuration-manager=file
   resource-groups.config-file=/usr/lib/presto/etc/resource_groups.json
 
-resource-groups-json: |-
+resource_groups_json: |-
   {
         "rootGroups": [{
           "name": "global",

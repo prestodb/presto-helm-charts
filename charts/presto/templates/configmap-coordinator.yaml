@@ -39,10 +39,10 @@ data:
     {{- toYaml .Values.metrics.config | nindent 4 }}
   {{- end }}
   run-coordinator-script.sh: |-
-    {{- .Values.run-coordinator | nindent 4 }}
+    {{- .Values.run_coordinator | nindent 4 }}
   password-authenticator.properties: |-
-    {{- toYaml .Values.password-authenticator | nindent 4 }}
+    {{- toYaml .Values.password_authenticator | nindent 4 }}
   resource-groups.properties: |-
-    {{- toYaml .Values.resource-groups-properties | nindent 4 }}
+    {{- toYaml .Values.resource_groups_properties | nindent 4 }}
   resource-groups.json: |-
-    {{- .Values.resource-groups-json | nindent 4 }}
+    {{- .Values.resource_groups_json | nindent 4 }}
