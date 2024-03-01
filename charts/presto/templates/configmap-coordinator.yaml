@@ -26,6 +26,11 @@ data:
     discovery-server.enabled={{ or (eq .Values.mode "single") (eq .Values.mode "cluster") }}
     node-scheduler.include-coordinator={{ eq .Values.mode "single" }}
     resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
+    #http-server.authentication.type=PASSWORD
+    #http-server.https.enabled=true
+    #http-server.https.port=8447
+    #http-server.https.keystore.path=/home/hadoop/wenkang/my_htpasswd/presto_keystore.jks
+    #http-server.https.keystore.key=123456
     {{- .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
@@ -33,3 +38,11 @@ data:
   jmx_exporter.yaml: |-
     {{- toYaml .Values.metrics.config | nindent 4 }}
   {{- end }}
+  run-coordinator-script.sh: |-
+    {{- .Values.run-coordinator | nindent 4 }}
+  password-authenticator.properties: |-
+    {{- toYaml .Values.password-authenticator | nindent 4 }}
+  resource-groups.properties: |-
+    {{- toYaml .Values.resource-groups-properties | nindent 4 }}
+  resource-groups.json: |-
+    {{- .Values.resource-groups-json | nindent 4 }}

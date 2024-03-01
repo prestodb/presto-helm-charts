@@ -85,7 +85,102 @@ config: |-
 log: |-
   com.facebook.presto=INFO
 
-# Resource Manager configuration
+run-coordinator: |-
+  #!/bin/bash
+  yum install -y python3-pip
+  pip3 install awscli --upgrade
+  export AWS_REGION=us-west-2
+  aws s3 cp s3://data-emr-pmi/ranger_jars/auth/nb-presto-auth.tar.gz .
+  tar zxf nb-presto-auth.tar.gz
+  # your commands here
+  #
+  $PRESTO_HOME/bin/launcher run
+
+password-authenticator: |-
+  password-authenticator.name=nb-password-authenticator
+  file.password-file=/etc/ranger/auth/password-auth.properties
+
+resource-groups-properties: |-
+  resource-groups.configuration-manager=file
+  resource-groups.config-file=/usr/lib/presto/etc/resource_groups.json
+
+resource-groups-json: |-
+  {
+        "rootGroups": [{
+          "name": "global",
+          "softMemoryLimit": "100%",
+          "hardConcurrencyLimit": 2,
+          "maxQueued": 100,
+          "schedulingPolicy": "weighted",
+          "jmxExport": true,
+          "subGroups": [{
+              "name": "nova",
+              "softMemoryLimit": "80%",
+              "hardConcurrencyLimit": 1,
+              "maxQueued": 50,
+              "schedulingWeight": 10,
+              "jmxExport": true
+            }, {
+              "name": "growth",
+              "softMemoryLimit": "20%",
+              "hardConcurrencyLimit": 1,
+              "maxQueued": 50,
+              "schedulingWeight": 10,
+              "jmxExport": true
+            },
+            {
+              "name": "admin",
+              "softMemoryLimit": "80%",
+              "hardConcurrencyLimit": 1,
+              "maxQueued": 50,
+              "schedulingWeight": 10,
+              "jmxExport": true
+            },
+            {
+              "name": "test",
+              "softMemoryLimit": "20%",
+              "hardConcurrencyLimit": 1,
+              "maxQueued": 50,
+              "schedulingWeight": 10,
+              "jmxExport": true
+            }
+          ]
+        }, {
+          "name": "admin",
+          "softMemoryLimit": "100%",
+          "hardConcurrencyLimit": 10,
+          "maxQueued": 50,
+          "schedulingPolicy": "query_priority",
+          "jmxExport": true
+        }],
+        "selectors": [{
+            "user": "nova",
+            "group": "global.nova"
+          },
+          {
+            "user": "nova_group",
+            "group": "global.nova"
+          },
+          {
+            "user": "growth",
+            "group": "global.growth"
+          },
+          {
+            "user": "growth_group",
+            "group": "global.growth"
+          },
+          {
+            "user": "hadoop",
+            "group": "global.admin"
+          },
+          {
+            "group": "global.test"
+          }
+        ],
+        "cpuQuotaPeriod": "1h"
+      }
+
+  # Resource Manager configuration
 resourceManager:
   # Number of resource managers in "ha-cluster" mode
   replicas: 1
