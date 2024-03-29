@@ -255,7 +255,7 @@ metrics:
   enabled: false
   port: 9090
   # Path to JMX exporter JAR file
-  javaagent: /usr/lib/presto/utils/jmx_prometheus_javaagent-0.20.0.jar
+  javaagent: /usr/lib/presto/utils/jmx_prometheus_javaagent.jar
   # JMX Exporter config, see https://github.com/prometheus/jmx_exporter#configuration for available options
   config:
     rules:
