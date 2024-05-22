@@ -92,7 +92,7 @@ resourceManager:
   # Resource manager JVM options (overwrites common JVM options)
   jvm: ""
   # Command to launch resource manager (templated)
-  command: ["sh", "-c", "$PRESTO_HOME/bin/launcher run"]
+  command: ~
   # Arguments to launch resource manager (templated)
   args: ~
   # Additional resource manager environment variables (templated)
@@ -144,7 +144,7 @@ coordinator:
   # Coordinator JVM options (overwrites common JVM options)
   jvm: ""
   # Command to launch coordinator (templated)
-  command: ["sh", "-c", "$PRESTO_HOME/bin/launcher run"]
+  command: ~
   # Arguments to launch coordinator (templated)
   args: ~
   # Additional coordinator environment variables (templated)
@@ -196,7 +196,7 @@ worker:
   # Worker JVM options (overwrites common JVM options)
   jvm: ""
   # Command to launch worker (templated)
-  command: ["sh", "-c", "$PRESTO_HOME/bin/launcher run"]
+  command: ~
   # Arguments to launch worker (templated)
   args: ~
   # Additional worker environment variables (templated)
