@@ -78,8 +78,8 @@ jvm: |-
 
 # Common configuration properties, see https://prestodb.io/docs/current/installation/deployment.html#config-properties
 config: |-
-  query.max-memory=1GB
-  query.max-memory-per-node=512MB
+  query.max-memory=512MB
+  query.max-memory-per-node=256MB
 
 # Common log-levels properties, see https://prestodb.io/docs/current/installation/deployment.html#log-levels
 log: |-
