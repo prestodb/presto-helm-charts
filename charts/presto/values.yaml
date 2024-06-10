@@ -87,8 +87,6 @@ log: |-
 
 # Resource Manager configuration
 resourceManager:
-  # Number of resource managers in "ha-cluster" mode
-  replicas: 1
   # Resource manager JVM options (overwrites common JVM options)
   jvm: ""
   # Command to launch resource manager (templated)
