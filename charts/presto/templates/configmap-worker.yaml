@@ -12,7 +12,6 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
   node.properties: |-
-    node.id=${ENV:HOSTNAME}
     node.location={{ .Values.node.location }}
     node.environment={{ .Values.node.environment }}
     node.data-dir={{ .Values.node.dataDir }}
@@ -26,9 +25,15 @@ data:
     http-server.http.port={{ .Values.service.port }}
     discovery.uri=http://{{ .Release.Name }}-discovery:{{ .Values.service.port }}
     resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
+    presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.worker.image.tag }}wVelox{{ .Values.worker.image.tag }}{{- end }}
     {{- .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
+  {{- with .Values.worker.image.repository}}
+  velox.properties.template: |-
+    mutable-config=true
+    expression.eval_simplified=false
+  {{- end}}
   {{- if .Values.metrics.enabled }}
   jmx_exporter.yaml: |-
     {{- toYaml .Values.metrics.config | nindent 4 }}

@@ -191,6 +191,10 @@ coordinator:
 worker:
   # Number of workers in "cluster" and "ha-cluster" modes
   replicas: 2
+  # Worker image (overwrites common image)
+  image: {}
+  # Worker oull sercrets (overwrites common pull secrets) 
+  imagePullSecrets: []
   # Worker JVM options (overwrites common JVM options)
   jvm: ""
   # Command to launch worker (templated)

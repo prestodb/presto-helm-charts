@@ -39,7 +39,7 @@ spec:
         checksum/catalog: {{ include (print $.Template.BasePath "/configmap-catalog.yaml") . | sha256sum }}
         checksum/worker: {{ include (print $.Template.BasePath "/configmap-worker.yaml") . | sha256sum }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.worker.imagePullSecrets | default .Values.imagePullSecrets }}
       imagePullSecrets: {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if or .Values.serviceAccount.create .Values.serviceAccount.name }}
@@ -50,9 +50,9 @@ spec:
       {{- end }}
       containers:
         - name: worker
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- with .Values.worker.command }}
+          image: "{{ .Values.worker.image.repository | default .Values.image.repository }}:{{ .Values.worker.image.tag | default .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.worker.image.pullPolicy | default .Values.image.pullPolicy }}
+          {{- with .Values.worker.command }}                        
           command: {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
           {{- with .Values.worker.args }}

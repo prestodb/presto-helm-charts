@@ -11,7 +11,6 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 data:
   node.properties: |-
-    node.id=${ENV:HOSTNAME}
     node.location={{ .Values.node.location }}
     node.environment={{ .Values.node.environment }}
     node.data-dir={{ .Values.node.dataDir }}
@@ -27,6 +26,10 @@ data:
     discovery-server.enabled={{ or (eq .Values.mode "single") (eq .Values.mode "cluster") }}
     node-scheduler.include-coordinator={{ eq .Values.mode "single" }}
     resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
+    presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.worker.image.tag }}wVelox{{ .Values.worker.image.tag }}{{- end }}
+    {{- with .Values.worker.image.repository}}
+    optimizer.optimize-hash-generation=false
+    {{- end}}
     {{- .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
