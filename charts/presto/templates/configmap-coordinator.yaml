@@ -31,7 +31,11 @@ data:
     resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
     presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.worker.image.tag }}wVelox{{ .Values.worker.image.tag }}{{- end }}
     {{- with .Values.worker.image.repository}}
+    native-execution-enabled=true
     optimizer.optimize-hash-generation=false
+    regex-library=RE2J
+    use-alternative-function-signatures=true
+    experimental.table-writer-merge-operator-enabled=false
     {{- end}}
     {{- .Values.config | nindent 4 }}
   log.properties: |-
