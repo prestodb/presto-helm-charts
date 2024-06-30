@@ -32,6 +32,21 @@ data:
     {{- .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
+  {{- if .Values.resourceGroups.manager }}
+  resource-groups.properties: |-
+    resource-groups.configuration-manager={{ .Values.resourceGroups.manager }}
+    {{- if eq .Values.resourceGroups.manager "file" }}
+    resource-groups.config-file=etc/resource-groups.json
+    {{- else if eq .Values.resourceGroups.manager "db" }}
+    resource-groups.config-db-url={{ .Values.resourceGroups.db.url }}
+    resource-groups.max-refresh-interval={{ .Values.resourceGroups.db.maxRefreshInterval }}
+    resource-groups.exact-match-selector-enabled={{ .Values.resourceGroups.db.exactMatchSelectorEnabled }}
+    {{- end }}
+  {{- end }}
+  {{- if and (eq .Values.resourceGroups.manager "file") (not .Values.resourceGroups.file.fromConfigMap) }}
+  resource-groups.json: |-
+    {{- .Values.resourceGroups.file.config | nindent 4 }}
+  {{- end }}
   {{- if .Values.metrics.enabled }}
   jmx_exporter.yaml: |-
     {{- toYaml .Values.metrics.config | nindent 4 }}

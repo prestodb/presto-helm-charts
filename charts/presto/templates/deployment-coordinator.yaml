@@ -104,8 +104,17 @@ spec:
         {{- end }}
       volumes:
         - name: config
-          configMap:
-            name: {{ .Release.Name }}-coordinator
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Release.Name }}-coordinator
+              {{- if and (eq .Values.resourceGroups.manager "file") (.Values.resourceGroups.file.fromConfigMap) }}
+              - configMap:
+                  name: {{ .Values.resourceGroups.file.fromConfigMap }}
+                  items:
+                    - key: resource-groups.json
+                      path: resource-groups.json
+              {{- end }}
         - name: catalog
           configMap:
             name: {{ .Release.Name }}-catalog

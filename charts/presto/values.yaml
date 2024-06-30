@@ -249,6 +249,40 @@ catalog: {}
 #  tpcds: |-
 #    connector.name=tpcds
 
+# Resource Groups, see https://prestodb.io/docs/current/admin/resource-groups.html
+resourceGroups:
+  # Configuration manager name (file or db), i.e. "resource-groups.configuration-manager" value
+  manager: ~
+  # File-Based Resource Management config, see https://prestodb.io/docs/current/admin/resource-groups.html#file-resource-group-manager
+  file:
+    # Configuration to be used as a resource-groups.json file, see example https://prestodb.io/docs/current/admin/resource-groups.html#id2
+    config: |-
+      {
+        "rootGroups": [
+          {
+            "name": "global",
+            "softMemoryLimit": "100%",
+            "hardConcurrencyLimit": 100,
+            "maxQueued": 500
+          }
+        ],
+        "selectors": [
+          {
+            "group": "global"      
+          }
+        ]
+      }
+    # Existing ConfigMap with 'resource-groups.json' key to be used as a configuration file (has higher priority over "config" property)
+    fromConfigMap: ~
+  # Database-Based Resource Management config, see https://prestodb.io/docs/current/admin/resource-groups.html#database-resource-group-manager
+  db:
+    # Database URL to load configuration from, i.e. "resource-groups.config-db-url" value
+    url: jdbc:mysql://mysql:3306/resource_groups?user=${ENV:RESOURCE_GROUP_USER}&password=${ENV:RESOURCE_GROUP_PASSWORD}
+    # Maximum time period to accept queries after refresh failures, i.e. "resource-groups.max-refresh-interval"
+    maxRefreshInterval: 1h
+    # Enable exact_match_source_selectors table usage, i.e. "resource-groups.exact-match-selector-enabled" value
+    exactMatchSelectorEnabled: false
+
 # Metrics endpoint to export JMX metrics in Prometheus format
 metrics:
   enabled: false
