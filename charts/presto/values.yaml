@@ -192,10 +192,6 @@ coordinator:
 worker:
   # Number of workers in "cluster" and "ha-cluster" modes
   replicas: 2
-  # Worker image (overwrites common image)
-  image: {}
-  # Worker oull sercrets (overwrites common pull secrets) 
-  imagePullSecrets: []
   # Worker JVM options (overwrites common JVM options)
   jvm: ""
   # Command to launch worker (templated)
@@ -243,6 +239,21 @@ worker:
   tolerations: []
   # Worker security context (overwrites default security context)
   securityContext: {}
+  
+# Enables Presto to use Velox based workers  
+velox: 
+  enabled: false
+  # Image details for Velox workers (overrides common image details)
+  image:
+    repository: prestodb/presto-native
+    pullPolicy: IfNotPresent
+    tag: ~
+  # Pull secrets for Velox workers (overrides common image details)
+  imagePullSecrets: []
+  # Velox configuration properties
+  config: |-
+    mutable-config=true
+    expression.eval_simplified=false
 
 # Catalogs
 catalog: {}

@@ -29,8 +29,8 @@ data:
     discovery-server.enabled={{ or (eq .Values.mode "single") (eq .Values.mode "cluster") }}
     node-scheduler.include-coordinator={{ eq .Values.mode "single" }}
     resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
-    presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.worker.image.tag }}wVelox{{ .Values.worker.image.tag }}{{- end }}
-    {{- with .Values.worker.image.repository}}
+    presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.velox.enabled }}wVelox{{ .Values.velox.image.tag }}{{- end }}
+    {{- if .Values.velox.enabled }}
     native-execution-enabled=true
     optimizer.optimize-hash-generation=false
     regex-library=RE2J

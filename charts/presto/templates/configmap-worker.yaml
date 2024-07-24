@@ -28,14 +28,13 @@ data:
     http-server.http.port={{ .Values.service.port }}
     discovery.uri=http://{{ .Release.Name }}-discovery:{{ .Values.service.port }}
     resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
-    presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.worker.image.tag }}wVelox{{ .Values.worker.image.tag }}{{- end }}
+    presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.velox.enabled }}wVelox{{ .Values.velox.image.tag }}{{- end }}
     {{- .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
-  {{- with .Values.worker.image.repository}}
+  {{- if .Values.velox.enabled }}
   velox.properties.template: |-
-    mutable-config=true
-    expression.eval_simplified=false
+  {{- .Values.velox.config | nindent 4 }}
   {{- end}}
   {{- if .Values.metrics.enabled }}
   jmx_exporter.yaml: |-
