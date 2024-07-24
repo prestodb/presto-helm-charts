@@ -2,30 +2,24 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Repository for Presto Helm charts.
+Repository for official Presto Helm charts.
 
-## Add Presto charts Helm repo
-Use the following command to add Presto charts repository to Helm configuration:
+## Helm charts repository
+Use the following command to add the repository to Helm client configuration:
 ```shell
-$ helm repo add presto https://prestodb.github.io/presto-helm-charts
+helm repo add presto https://prestodb.github.io/presto-helm-charts
+```
+List the latest stable versions of available Helm charts with the command:
+```shell
+helm search repo presto
 ```
 
-## Debugging chart templates
-Use `helm template --debug` to render the chart templates locally, for example, to check correctness when Ingress is enabled:
-```shell
-$ helm template my-presto charts/presto --set ingress.enabled=true --debug
-```
+## Contributing
+Presto welcomes contributions from everyone.
 
-Use `helm install --dry-run --debug` to render the chart templates on a server side without creating resources.
-The command simulates installation, which is useful to check if the chart and configuration are valid for a specific Kubernetes cluster:
-```shell
-$ helm install my-presto charts/presto --set ingress.enabled=true --dry-run --debug
-```
+Feel free to create an issue with a bug report, feature request or submit a PR.
 
-## Running locally
-[Minikube](https://minikube.sigs.k8s.io) can be used to deploy the chart and run Presto locally.
-The following commands start minikube instance and open Kubernetes cluster dashboard in the default web browser:
-```shell
-$ minikube start --cpus=4 --memory=8g --addons=ingress --addons=ingress-dns
-$ minikube dashboard
-```
+Check out [development guidelines](https://github.com/prestodb/presto-helm-charts/blob/main/DEVELOPMENT.md) for local development and testing. 
+
+## Questions
+Join [PrestoDB on Slack](https://communityinviter.com/apps/prestodb/prestodb) to ask questions to the community.
