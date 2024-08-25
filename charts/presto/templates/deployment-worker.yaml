@@ -9,6 +9,7 @@
 {{- $tolerations := or .Values.worker.tolerations .Values.tolerations }}
 {{- $securityContext := or .Values.worker.securityContext .Values.securityContext }}
 {{- if or (eq .Values.mode "cluster") (eq .Values.mode "ha-cluster") }}
+{{- $podSecurityContext := or .Values.worker.podSecurityContext .Values.podSecurityContext }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -52,6 +53,9 @@ spec:
         - name: worker
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with $securityContext }}
+          securityContext: {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.worker.command }}
           command: {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
@@ -122,7 +126,7 @@ spec:
       {{- with $tolerations }}
       tolerations: {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $securityContext }}
+      {{- with $podSecurityContext }}
       securityContext: {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}
