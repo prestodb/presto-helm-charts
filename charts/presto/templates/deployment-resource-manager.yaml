@@ -8,6 +8,7 @@
 {{- $affinity := or .Values.resourceManager.affinity .Values.affinity }}
 {{- $tolerations := or .Values.resourceManager.tolerations .Values.tolerations }}
 {{- $securityContext := or .Values.resourceManager.securityContext .Values.securityContext }}
+{{- $podSecurityContext := or .Values.resourceManager.podSecurityContext .Values.podSecurityContext }}
 {{- if eq .Values.mode "ha-cluster" }}
 apiVersion: apps/v1
 kind: Deployment
@@ -52,6 +53,9 @@ spec:
         - name: resource-manager
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with $securityContext }}
+          securityContext: {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.resourceManager.command }}
           command: {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
@@ -124,7 +128,7 @@ spec:
       {{- with $tolerations }}
       tolerations: {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $securityContext }}
+      {{- with $podSecurityContext }}
       securityContext: {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}
