@@ -39,8 +39,10 @@ spec:
         checksum/catalog: {{ include (print $.Template.BasePath "/configmap-catalog.yaml") . | sha256sum }}
         checksum/worker: {{ include (print $.Template.BasePath "/configmap-worker.yaml") . | sha256sum }}
     spec:
-      {{- with .Values.worker.imagePullSecrets | default .Values.imagePullSecrets }}
-      imagePullSecrets: {{- toYaml . | nindent 8 }}
+      {{- if .Values.velox.enabled }}
+      imagePullSecrets: {{- toYaml .Values.velox.imagePullSecrets | nindent 8 }}
+      {{- else }}
+      imagePullSecrets: {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       {{- end }}
       {{- if or .Values.serviceAccount.create .Values.serviceAccount.name }}
       serviceAccountName: {{ .Values.serviceAccount.name | default .Release.Name }}
@@ -50,8 +52,8 @@ spec:
       {{- end }}
       containers:
         - name: worker
-          image: "{{ .Values.worker.image.repository | default .Values.image.repository }}:{{ .Values.worker.image.tag | default .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.worker.image.pullPolicy | default .Values.image.pullPolicy }}
+          image: "{{ if .Values.velox.enabled }}{{ .Values.velox.image.repository }}:{{ .Values.velox.image.tag | default .Chart.AppVersion }}{{ else }}{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}{{ end }}"
+          imagePullPolicy: {{ if .Values.velox.enabled }}{{ .Values.velox.image.pullPolicy }}{{ else }}{{ .Values.image.pullPolicy }}{{ end }}
           {{- with .Values.worker.command }}                        
           command: {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
