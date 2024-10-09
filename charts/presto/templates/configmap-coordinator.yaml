@@ -37,7 +37,7 @@ data:
     use-alternative-function-signatures=true
     experimental.table-writer-merge-operator-enabled=false
     {{- end}}
-    {{- .Values.config | nindent 4 }}
+    {{- .Values.coordinator.config | default .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
   {{- if .Values.resourceGroups.manager }}

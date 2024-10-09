@@ -29,7 +29,7 @@ data:
     discovery.uri=http://{{ .Release.Name }}-discovery:{{ .Values.service.port }}
     resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
     presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.velox.enabled }}wVelox{{ .Values.velox.image.tag }}{{- end }}
-    {{- .Values.config | nindent 4 }}
+    {{- .Values.worker.config | default .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
   {{- if .Values.velox.enabled }}
