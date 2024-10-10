@@ -33,7 +33,7 @@ data:
     resource-manager=true
     thrift.server.port=8081
     thrift.server.ssl.enabled=false
-    {{- .Values.config | nindent 4 }}
+    {{- .Values.resourceManager.config | default .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
   {{- if .Values.metrics.enabled }}

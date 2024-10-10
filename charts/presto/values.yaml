@@ -90,6 +90,8 @@ log: |-
 resourceManager:
   # Resource manager JVM options (overwrites common JVM options)
   jvm: ""
+  # Resource manager configuration properties (overwrites common config options)
+  config: ~
   # Command to launch resource manager (templated)
   command: ~
   # Arguments to launch resource manager (templated)
@@ -142,6 +144,8 @@ coordinator:
   replicas: 1
   # Coordinator JVM options (overwrites common JVM options)
   jvm: ""
+  # Coordinator configuration properties (overwrites common config options)
+  config: ~
   # Command to launch coordinator (templated)
   command: ~
   # Arguments to launch coordinator (templated)
@@ -194,6 +198,8 @@ worker:
   replicas: 2
   # Worker JVM options (overwrites common JVM options)
   jvm: ""
+  # Worker configuration properties (overwrites common config options)
+  config: ~
   # Command to launch worker (templated)
   command: ~
   # Arguments to launch worker (templated)
@@ -239,6 +245,21 @@ worker:
   tolerations: []
   # Worker security context (overwrites default security context)
   securityContext: {}
+  
+# Enables Presto to use Velox based workers  
+velox: 
+  enabled: false
+  # Image details for Velox workers (overrides common image details)
+  image:
+    repository: prestodb/presto-native
+    pullPolicy: IfNotPresent
+    tag: ~
+  # Pull secrets for Velox workers (overrides common image details)
+  imagePullSecrets: []
+  # Velox properties
+  config: |-
+    mutable-config=true
+    expression.eval_simplified=false
 
 # Catalogs
 catalog: {}
