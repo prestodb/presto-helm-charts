@@ -29,7 +29,15 @@ data:
     discovery-server.enabled={{ or (eq .Values.mode "single") (eq .Values.mode "cluster") }}
     node-scheduler.include-coordinator={{ eq .Values.mode "single" }}
     resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
-    {{- .Values.config | nindent 4 }}
+    presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.prestoCpp.enabled }}wCPP{{ .Values.prestoCpp.image.tag }}{{- end }}
+    {{- if .Values.prestoCpp.enabled }}
+    native-execution-enabled=true
+    optimizer.optimize-hash-generation=false
+    regex-library=RE2J
+    use-alternative-function-signatures=true
+    experimental.table-writer-merge-operator-enabled=false
+    {{- end }}
+    {{- .Values.coordinator.config | default .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
   {{- if .Values.resourceGroups.manager }}

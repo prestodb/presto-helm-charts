@@ -28,7 +28,8 @@ data:
     http-server.http.port={{ .Values.service.port }}
     discovery.uri=http://{{ .Release.Name }}-discovery:{{ .Values.service.port }}
     resource-manager-enabled={{ eq .Values.mode "ha-cluster" }}
-    {{- .Values.config | nindent 4 }}
+    presto.version={{ .Values.image.tag | default .Chart.AppVersion }}{{- if .Values.prestoCpp.enabled }}wCPP{{ .Values.prestoCpp.image.tag }}{{- end }}
+    {{- .Values.worker.config | default .Values.config | nindent 4 }}
   log.properties: |-
     {{- .Values.log | nindent 4 }}
   {{- if .Values.metrics.enabled }}
