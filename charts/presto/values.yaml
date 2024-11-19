@@ -90,6 +90,8 @@ log: |-
 resourceManager:
   # Resource manager JVM options (overwrites common JVM options)
   jvm: ""
+  # Resource manager configuration properties (overwrites common config options)
+  config: ~
   # Command to launch resource manager (templated)
   command: ~
   # Arguments to launch resource manager (templated)
@@ -142,6 +144,8 @@ coordinator:
   replicas: 1
   # Coordinator JVM options (overwrites common JVM options)
   jvm: ""
+  # Coordinator configuration properties (overwrites common config options)
+  config: ~
   # Command to launch coordinator (templated)
   command: ~
   # Arguments to launch coordinator (templated)
@@ -194,6 +198,8 @@ worker:
   replicas: 2
   # Worker JVM options (overwrites common JVM options)
   jvm: ""
+  # Worker configuration properties (overwrites common config options)
+  config: ~
   # Command to launch worker (templated)
   command: ~
   # Arguments to launch worker (templated)
@@ -239,6 +245,15 @@ worker:
   tolerations: []
   # Worker security context (overwrites default security context)
   securityContext: {}
+  
+# Enables Presto to use C++ based workers  
+prestoCpp: 
+  enabled: false
+  # Image details for Presto C++ workers (overrides common image details)
+  image:
+    repository: prestodb/presto-native
+    pullPolicy: IfNotPresent
+    tag: ~
 
 # Catalogs
 catalog: {}
