@@ -5,7 +5,7 @@
 This chart bootstraps a [Presto](https://prestodb.io) on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
-- Kubernetes 1.27+
+- Kubernetes 1.30+
 - Helm 3
 
 ## Presto charts Helm repository
