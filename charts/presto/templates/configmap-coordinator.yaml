@@ -35,7 +35,6 @@ data:
     optimizer.optimize-hash-generation=false
     regex-library=RE2J
     use-alternative-function-signatures=true
-    experimental.table-writer-merge-operator-enabled=false
     {{- end }}
     {{- .Values.coordinator.config | default .Values.config | nindent 4 }}
   log.properties: |-
