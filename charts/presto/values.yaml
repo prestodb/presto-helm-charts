@@ -137,6 +137,10 @@ resourceManager:
   tolerations: []
   # Resource manager security context (overwrites default security context)
   securityContext: {}
+  # Annotations to add to resource manager pods
+  podAnnotations: {}
+    #prometheus.io/scrape: "true"
+    #prometheus.io/port: "8080"
 
 # Coordinator configuration
 coordinator:
@@ -191,6 +195,10 @@ coordinator:
   tolerations: []
   # Coordinator security context (overwrites default security context)
   securityContext: {}
+  # Annotations to add to coordinator pods
+  podAnnotations: {}
+    #prometheus.io/scrape: "true"
+    #prometheus.io/port: "8080"
 
 # Worker configuration
 worker:
@@ -245,6 +253,10 @@ worker:
   tolerations: []
   # Worker security context (overwrites default security context)
   securityContext: {}
+  # Annotations to add to worker pods
+  podAnnotations: {}
+    #prometheus.io/scrape: "true"
+    #prometheus.io/port: "8080"
   
 # Enables Presto to use C++ based workers  
 prestoCpp: 

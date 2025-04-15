@@ -38,6 +38,9 @@ spec:
       annotations:
         checksum/catalog: {{ include (print $.Template.BasePath "/configmap-catalog.yaml") . | sha256sum }}
         checksum/worker: {{ include (print $.Template.BasePath "/configmap-worker.yaml") . | sha256sum }}
+        {{- with .Values.worker.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets: {{- toYaml . | nindent 8 }}
