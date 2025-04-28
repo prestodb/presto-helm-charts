@@ -30,6 +30,10 @@ serviceAccount:
   labels: {}
   annotations: {}
 
+# Annotations to add to each pod in every deployment
+podAnnotations: {}
+  #annotation-source-common: "true"
+
 # Common environment variables (templated)
 env: []
 # Common envFrom items to set up environment variables (templated)
@@ -139,8 +143,7 @@ resourceManager:
   securityContext: {}
   # Annotations to add to resource manager pods
   podAnnotations: {}
-    #prometheus.io/scrape: "true"
-    #prometheus.io/port: "8080"
+    #annotation-source-resource-manager: "true"
 
 # Coordinator configuration
 coordinator:
@@ -197,8 +200,7 @@ coordinator:
   securityContext: {}
   # Annotations to add to coordinator pods
   podAnnotations: {}
-    #prometheus.io/scrape: "true"
-    #prometheus.io/port: "8080"
+    #annotation-source-coordinator: "true"
 
 # Worker configuration
 worker:
@@ -255,8 +257,7 @@ worker:
   securityContext: {}
   # Annotations to add to worker pods
   podAnnotations: {}
-    #prometheus.io/scrape: "true"
-    #prometheus.io/port: "8080"
+    #annotation-source-worker: "true"
   
 # Enables Presto to use C++ based workers  
 prestoCpp: 
