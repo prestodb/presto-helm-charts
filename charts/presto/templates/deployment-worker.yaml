@@ -1,4 +1,4 @@
-{{- $podAnnotations := mergeOverwrite .Values.worker.podAnnotations .Values.podAnnotations }}
+{{- $podAnnotations := mergeOverwrite .Values.podAnnotations .Values.worker.podAnnotations }}
 {{- $env := concat .Values.env .Values.worker.env }}
 {{- $envFrom := concat .Values.envFrom .Values.worker.envFrom }}
 {{- $volumes := concat .Values.volumes .Values.worker.volumes }}
