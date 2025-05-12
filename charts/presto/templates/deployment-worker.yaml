@@ -1,4 +1,3 @@
-{{- $podAnnotations := mergeOverwrite .Values.podAnnotations .Values.worker.podAnnotations }}
 {{- $env := concat .Values.env .Values.worker.env }}
 {{- $envFrom := concat .Values.envFrom .Values.worker.envFrom }}
 {{- $volumes := concat .Values.volumes .Values.worker.volumes }}
@@ -39,9 +38,7 @@ spec:
       annotations:
         checksum/catalog: {{ include (print $.Template.BasePath "/configmap-catalog.yaml") . | sha256sum }}
         checksum/worker: {{ include (print $.Template.BasePath "/configmap-worker.yaml") . | sha256sum }}
-        {{- with $podAnnotations }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- include "presto.workerAnnotations" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets: {{- toYaml . | nindent 8 }}

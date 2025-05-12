@@ -1,4 +1,3 @@
-{{- $podAnnotations := mergeOverwrite .Values.podAnnotations .Values.resourceManager.podAnnotations }}
 {{- $env := concat .Values.env .Values.resourceManager.env }}
 {{- $envFrom := concat .Values.envFrom .Values.resourceManager.envFrom }}
 {{- $volumes := concat .Values.volumes .Values.resourceManager.volumes }}
@@ -39,9 +38,7 @@ spec:
       annotations:
         checksum/catalog: {{ include (print $.Template.BasePath "/configmap-catalog.yaml") . | sha256sum }}
         checksum/resource-manager: {{ include (print $.Template.BasePath "/configmap-resource-manager.yaml") . | sha256sum }}
-        {{- with $podAnnotations }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- include "presto.resourceManagerAnnotations" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets: {{- toYaml . | nindent 8 }}

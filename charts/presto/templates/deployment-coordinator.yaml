@@ -1,4 +1,3 @@
-{{- $podAnnotations := mergeOverwrite .Values.podAnnotations .Values.coordinator.podAnnotations }}
 {{- $env := concat .Values.env .Values.coordinator.env }}
 {{- $envFrom := concat .Values.envFrom .Values.coordinator.envFrom }}
 {{- $volumes := concat .Values.volumes .Values.coordinator.volumes }}
@@ -38,9 +37,7 @@ spec:
       annotations:
         checksum/catalog: {{ include (print $.Template.BasePath "/configmap-catalog.yaml") . | sha256sum }}
         checksum/coordinator: {{ include (print $.Template.BasePath "/configmap-coordinator.yaml") . | sha256sum }}
-        {{- with $podAnnotations }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- include "presto.coordinatorAnnotations" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets: {{- toYaml . | nindent 8 }}
