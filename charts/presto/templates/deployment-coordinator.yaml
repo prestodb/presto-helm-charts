@@ -1,4 +1,4 @@
-{{- $podAnnotations := mergeOverwrite .Values.podAnnotations .Values.coordinator.podAnnotations }}
+{{- $podAnnotations := mergeOverwrite (deepCopy .Values.podAnnotations) .Values.coordinator.podAnnotations }}
 {{- $env := concat .Values.env .Values.coordinator.env }}
 {{- $envFrom := concat .Values.envFrom .Values.coordinator.envFrom }}
 {{- $volumes := concat .Values.volumes .Values.coordinator.volumes }}
