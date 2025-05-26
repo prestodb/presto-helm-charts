@@ -30,6 +30,11 @@ serviceAccount:
   labels: {}
   annotations: {}
 
+# Annotations to add to each pod in every deployment
+podAnnotations: {}
+  #annotation-source-common: "true"
+  #check-merge-overwrite: "common"
+
 # Common environment variables (templated)
 env: []
 # Common envFrom items to set up environment variables (templated)
@@ -137,6 +142,10 @@ resourceManager:
   tolerations: []
   # Resource manager security context (overwrites default security context)
   securityContext: {}
+  # Annotations to add to resource manager pods
+  podAnnotations: {}
+    #annotation-source-resource-manager: "true"
+    #check-merge-overwrite: "resource-manager"
 
 # Coordinator configuration
 coordinator:
@@ -191,6 +200,10 @@ coordinator:
   tolerations: []
   # Coordinator security context (overwrites default security context)
   securityContext: {}
+  # Annotations to add to coordinator pods
+  podAnnotations: {}
+    #annotation-source-coordinator: "true"
+    #check-merge-overwrite: "coordinator"
 
 # Worker configuration
 worker:
@@ -245,6 +258,10 @@ worker:
   tolerations: []
   # Worker security context (overwrites default security context)
   securityContext: {}
+  # Annotations to add to worker pods
+  podAnnotations: {}
+    #annotation-source-worker: "true"
+    #check-merge-overwrite: "worker"
   
 # Enables Presto to use C++ based workers  
 prestoCpp: 
